@@ -54,7 +54,7 @@ export const removeOrphanMorphType = async (
       const joinTableName = attribute.joinTable.name;
 
       // Query distinct morph types from the join table
-      const morphTypes = await db.connection(joinTableName).distinct(pivot).pluck(pivot);
+      const morphTypes = await db.getConnection(joinTableName).distinct(pivot).pluck(pivot);
 
       for (const morphType of morphTypes) {
         // Check if metadata for the morph type exists
@@ -74,7 +74,7 @@ export const removeOrphanMorphType = async (
             `Removing invalid morph type "${morphType}" from table "${joinTableName}".`
           );
           try {
-            await db.connection(joinTableName).where(pivot, morphType).del();
+            await db.getConnection(joinTableName).where(pivot, morphType).del();
           } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
             db.logger.error(
